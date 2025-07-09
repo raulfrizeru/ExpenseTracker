@@ -1,0 +1,47 @@
+﻿@page "/categories"
+@using ExpenseTracker.Components.Data
+@rendermode InteractiveServer
+
+<PageTitle>Categories</PageTitle>
+<ul>
+    @foreach (var category in categories)
+    {
+        <li>
+            @category.Name 
+            <button @onclick="() => DeleteCategory(category.Id)">Delete</button>
+        </li>
+    }
+</ul>
+
+<h3>Add New Category</h3>
+<input type="text" @bind="newCategoryName" placeholder="Category Name" />
+<button @onclick="AddCategory">Add</button>
+
+@code{
+    List<Category> categories = new List<Category>
+    {
+        new Category { Id = 1, Name = "Food" },
+        new Category { Id = 2, Name = "House" },
+        new Category { Id = 3, Name = "Entertainment" }
+    };
+
+    string newCategoryName;
+
+    void AddCategory()
+    {
+        if (!string.IsNullOrWhiteSpace(newCategoryName))
+        {
+            categories.Add(new Category { Id = categories.Count + 1, Name = newCategoryName });
+            newCategoryName = string.Empty; // Clear the input field
+        }
+    }
+
+    void DeleteCategory(int? id)
+    {
+        var categoryToRemove = categories.FirstOrDefault(c => c.Id == id);
+        if (categoryToRemove != null)
+        {
+            categories.Remove(categoryToRemove);
+        }
+    }
+}

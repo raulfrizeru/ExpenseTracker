@@ -1,7 +1,9 @@
 ﻿
 @page "/categories"
 @using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
 @rendermode InteractiveServer
+@inject CategoryService Service;
 
 <PageTitle>Categories</PageTitle>
 <ul>
@@ -25,6 +27,11 @@
         new Category { Id = 2, Name = "House" },
         new Category { Id = 3, Name = "Entertainment" }
     };
+
+    protected override void OnInitialized()
+    {
+        categories = Service.findAllCategories();
+    }
 
     string newCategoryName;
 

@@ -21,14 +21,14 @@
 <button @onclick="AddCategory">Add</button>
 
 @code{
-    List<Category> categories = new List<Category>
-    {
-        new Category { Id = 1, Name = "Food" },
-        new Category { Id = 2, Name = "House" },
-        new Category { Id = 3, Name = "Entertainment" }
-    };
+    List<Category> categories = new List<Category>();
 
     protected override void OnInitialized()
+    {
+        LoadCategories();
+    }
+
+    void LoadCategories()
     {
         categories = Service.findAllCategories();
     }
@@ -39,8 +39,15 @@
     {
         if (!string.IsNullOrWhiteSpace(newCategoryName))
         {
-            categories.Add(new Category { Id = categories.Count + 1, Name = newCategoryName });
-            newCategoryName = string.Empty; // Clear the input field
+            Category category = new Category
+			{
+				Id = categories.Count > 0 ? categories.Max(c => c.Id) + 1 : 1,
+				Name = newCategoryName
+			};
+            Service.addCategory(category);
+            LoadCategories();
+            newCategoryName = string.Empty;
+            StateHasChanged();
         }
     }
 
@@ -49,7 +56,9 @@
         var categoryToRemove = categories.FirstOrDefault(c => c.Id == id);
         if (categoryToRemove != null)
         {
-            categories.Remove(categoryToRemove);
+            Service.removeCategory(categoryToRemove);
+            LoadCategories();
+            StateHasChanged();
         }
     }
 }

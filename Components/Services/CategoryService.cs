@@ -16,6 +16,20 @@ namespace ExpenseTracker.Components.Services
         {
             return _context.Categories.ToList();
         }
+
+        public Category addCategory(Category category)
+        {
+            _context.Categories.Add(category);
+            _context.SaveChanges();
+            return category;
+        }
+
+        public void removeCategory(Category category)
+        {
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+            
+        }
         
         
     }

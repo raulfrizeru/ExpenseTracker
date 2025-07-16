@@ -1,0 +1,39 @@
+﻿
+@page "/edit-income/{IncomeId:int}"
+@rendermode InteractiveServer
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject IncomeService IncomeService
+@inject NavigationManager Navigation
+
+<h3>EditIncome</h3>
+@if (income == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <IncomeForm Income="income"
+				SubmitButtonText="Save Changes"
+				OnValidSubmit="HandleEditIncome" />
+}
+
+@code {
+	[Parameter]
+	public int IncomeId { get; set; }
+	private Income? income;
+	protected override void OnInitialized()
+	{
+		income = IncomeService.findIncomeById(IncomeId);
+		if (income != null)
+		{
+			income.Date = DateTime.SpecifyKind(income.Date, DateTimeKind.Utc);
+		}
+	}
+	private void HandleEditIncome()
+	{
+		income.Date = income.Date.ToUniversalTime();
+		IncomeService.updateIncome(income);
+		Navigation.NavigateTo("/incomes");
+	}
+}

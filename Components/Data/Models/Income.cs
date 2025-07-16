@@ -1,6 +1,6 @@
 ﻿namespace ExpenseTracker.Components.Data.Models
 {
-    public enum Type
+    public enum IncomeType
     {
         Salary,
         Scholarship,
@@ -13,6 +13,6 @@
         public string? Title { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public decimal Amount { get; set; }
-        public Type Type { get; set; } = Type.Salary;
+        public IncomeType Type { get; set; } = IncomeType.Salary;
     }
 }

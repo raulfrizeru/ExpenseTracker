@@ -1,0 +1,64 @@
+﻿@page "/expenses/category/{CategoryId:int}"
+@rendermode InteractiveServer
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject ExpenseService ExpenseService
+@inject CategoryService CategoryService
+
+<h3>Expenses in "@categoryName"</h3>
+
+@if (expenses == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!expenses.Any())
+{
+    <p>No expenses found for this category.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Planned</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var expense in expenses)
+            {
+                <tr>
+                    <td>@expense.Title</td>
+                    <td>@expense.Date.ToShortDateString()</td>
+                    <td>@expense.Amount.ToString("C")</td>
+                    <td>@(expense.Planned ? "Yes" : "No")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public int CategoryId { get; set; }
+
+    private string categoryName = string.Empty;
+    private List<Expense> expenses;
+
+    protected override void OnInitialized()
+    {
+        var category = CategoryService.findCategoryById(CategoryId);
+        if (category != null)
+        {
+            categoryName = category.Name;
+            expenses = ExpenseService.findExpensesByCategoryId(CategoryId);
+        }
+        else
+        {
+            categoryName = "Unknown Category";
+            expenses = new List<Expense>();
+        }
+    }
+}

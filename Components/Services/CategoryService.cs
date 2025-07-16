@@ -29,6 +29,11 @@ namespace ExpenseTracker.Components.Services
             _context.Categories.Remove(category);
             _context.SaveChanges(); 
         }
+
+        public Category findCategoryById(int id)
+        {
+            return _context.Categories.Where(c => c.Id == id).Single();
+        }
         
         
     }

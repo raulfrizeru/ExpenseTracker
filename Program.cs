@@ -12,6 +12,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ExpenseService>();
+builder.Services.AddScoped<IncomeService>();
 
 var connectionString = builder.Configuration.GetConnectionString("ExpenseTrackerDatabase");
 builder.Services.AddDbContext<ExpenseTrackerContext>(options => options.UseNpgsql(connectionString));

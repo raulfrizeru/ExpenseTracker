@@ -4,14 +4,15 @@
 @using ExpenseTracker.Components.Services
 @rendermode InteractiveServer
 @inject CategoryService Service;
+@inject NavigationManager Navigation;
 
 <PageTitle>Categories</PageTitle>
 <ul>
     @foreach (var category in categories)
     {
         <li>
-            @category.Name 
-            <button @onclick="() => DeleteCategory(category.Id)">Delete</button>
+            <a class="btn btn-link" href="@($"/expenses/category/{category.Id}")">@category.Name</a>
+            <button class="btn btn-danger mb-3" @onclick="() => DeleteCategory(category.Id)">Delete</button>
         </li>
     }
 </ul>

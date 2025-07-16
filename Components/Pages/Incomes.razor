@@ -1,0 +1,65 @@
+﻿@page "/incomes"
+@rendermode InteractiveServer
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject IncomeService IncomeService
+@inject NavigationManager Navigation
+
+<h3>Incomes</h3>
+
+<table>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Date</th>
+			<th>Amount</th>
+			<th>Category</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var income in incomes)
+		{
+			<tr>
+				<td>@income.Title</td>
+				<td>@income.Date.ToShortDateString()</td>
+				<td>@income.Amount.ToString("C")</td>
+				<td>@income.Type.ToString()</td>
+				<td>
+					<button class="btn btn-secondary" @onclick="() => EditIncome(income)">Edit</button>
+					<button class="btn btn-danger mb-3" @onclick="() => DeleteIncome(income.Id)">Delete</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<button class="btn btn-success mb-3" @onclick="GoToAddIncome">Add Income</button>
+
+@code {
+	List<Income> incomes = new List<Income>();
+	public void LoadIncomes()
+	{
+		incomes = IncomeService.findAllIncomes();
+	}
+	protected override void OnInitialized()
+	{
+		LoadIncomes();
+	}
+	private void EditIncome(Income income)
+	{
+		Navigation.NavigateTo($"/edit-income/{income.Id}");
+	}
+	private void DeleteIncome(int? id)
+	{
+		var incomeToDelete = incomes.FirstOrDefault(i => i.Id == id);
+		if (incomeToDelete != null)
+		{
+			IncomeService.removeIncome(incomeToDelete);
+			LoadIncomes();
+		}
+	}
+	private void GoToAddIncome()
+	{
+		Navigation.NavigateTo("/incomes/new");
+	}
+}

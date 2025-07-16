@@ -1,0 +1,54 @@
+﻿@using ExpenseTracker.Components.Data.Models
+@inherits ComponentBase
+
+<EditForm Model="Income" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="Income.Title" placeholder="Income Title" />
+    </div>
+
+    <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <InputDate id="date" class="form-control" @bind-Value="Income.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <InputNumber id="amount" class="form-control" @bind-Value="Income.Amount" />
+    </div>
+
+    <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <InputSelect id="type" class="form-select" @bind-Value="Income.Type">
+            @foreach (var type in Enum.GetValues<IncomeType>())
+            {
+                <option value="@type">@type</option>
+            }
+        </InputSelect>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Income Income { get; set; } = default!; 
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; } 
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Save";
+
+    private async Task HandleValidSubmit()
+    {
+        if (OnValidSubmit.HasDelegate)
+        {
+            await OnValidSubmit.InvokeAsync();
+        }
+    }
+}

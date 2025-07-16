@@ -24,6 +24,8 @@ namespace ExpenseTracker.Components.Data
                 new Category { Id = 5, Name="Clothes" },
                 new Category { Id = 6, Name="House" },
             });
-        }
-    }
+			modelBuilder.Entity<Income>().Property(i => i.Type).HasConversion<string>();
+
+		}
+	}
 }

@@ -35,5 +35,10 @@ namespace ExpenseTracker.Components.Services
             _context.SaveChanges();
             return expense;
         }
+
+        public List <Expense> findExpensesByCategoryId(int categoryId)
+        {
+            return _context.Expenses.Include(e => e.Category).Where(e => e.CategoryId == categoryId).ToList();
+        }
     }
 }

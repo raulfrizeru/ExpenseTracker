@@ -1,0 +1,32 @@
+﻿@page "/expenses/new"
+@rendermode InteractiveServer	
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject ExpenseService ExpenseService;
+@inject CategoryService CategoryService;
+@inject NavigationManager Navigation;
+
+<h3>AddExpense</h3>
+<ExpenseForm Expense="newExpense"
+			 Categories="categories"
+			 SubmitButtonText="Add Expense"
+			 OnValidSubmit="HandleAddExpense" />
+
+@code {
+	Expense newExpense = new Expense
+		{
+			Date = DateTime.Now
+		};
+	List<Category> categories = new();
+
+	protected override void OnInitialized()
+	{
+		categories = CategoryService.findAllCategories();
+	}
+	private void HandleAddExpense()
+	{
+		newExpense.Date = newExpense.Date.ToUniversalTime();
+		ExpenseService.addExpense(newExpense);
+		Navigation.NavigateTo("/expenses");
+	}
+}

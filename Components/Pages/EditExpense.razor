@@ -1,0 +1,47 @@
+﻿@page "/expenses/{ExpenseId:int}"
+@rendermode InteractiveServer
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject ExpenseService ExpenseService
+@inject CategoryService CategoryService
+@inject NavigationManager Navigation
+
+<h3>Edit Expense</h3>
+
+@if (expense == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ExpenseForm Expense="expense"
+                 Categories="categories"
+                 SubmitButtonText="Save Changes"
+                 OnValidSubmit="HandleEditExpense" />
+}
+
+@code {
+    [Parameter]
+    public int ExpenseId { get; set; }
+
+    private Expense? expense;
+    private List<Category> categories = new();
+
+    protected override void OnInitialized()
+    {
+        categories = CategoryService.findAllCategories();
+        expense = ExpenseService.findAllExpenses().FirstOrDefault(e => e.Id == ExpenseId);
+
+        if (expense != null)
+        {
+            expense.Date = DateTime.SpecifyKind(expense.Date, DateTimeKind.Utc);
+        }
+    }
+
+    private void HandleEditExpense()
+    {
+        expense.Date = expense.Date.ToUniversalTime();
+        ExpenseService.updateExpense(expense);
+        Navigation.NavigateTo("/expenses");
+    }
+}

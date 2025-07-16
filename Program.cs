@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddRazorComponents();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ExpenseService>();
 
 var connectionString = builder.Configuration.GetConnectionString("ExpenseTrackerDatabase");
 builder.Services.AddDbContext<ExpenseTrackerContext>(options => options.UseNpgsql(connectionString));

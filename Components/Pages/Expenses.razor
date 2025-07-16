@@ -1,0 +1,63 @@
+﻿@page "/expenses"
+@rendermode InteractiveServer
+@using ExpenseTracker.Components.Data.Models
+@using ExpenseTracker.Components.Services
+@inject ExpenseService Service;
+@inject NavigationManager Navigation;
+
+<h3>Expenses</h3>
+<table>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Date</th>
+			<th>Amount</th>
+			<th>Planned</th>
+			<th>Category</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var expense in expenses)
+		{
+			<tr>
+				<td>@expense.Title</td>
+				<td>@expense.Date.ToShortDateString()</td>
+				<td>@expense.Amount.ToString("C")</td>
+				<td>@(expense.Planned ? "Yes" : "No")</td>
+				<td>@(expense.Category?.Name ?? "Uncategorized")</td>
+				<td>
+					<button class="btn btn-secondary" @onclick="()=>EditExpense(expense)">Edit</button>
+					<button class="btn btn-danger mb-3" @onclick="() => DeleteExpense(expense.Id)">Delete</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<button class="btn btn-success mb-3" @onclick="GoToAddExpense">Add New Expense</button>
+
+@code {
+	List<Expense> expenses = new List<Expense>();
+	public void LoadExpenses()
+	{
+		expenses=Service.findAllExpenses().ToList();
+	}
+	protected override void OnInitialized()
+	{
+		LoadExpenses();
+	}
+	private void GoToAddExpense()
+	{
+		Navigation.NavigateTo("/expenses/new");
+	}
+	private void EditExpense(Expense expense)
+	{
+		Navigation.NavigateTo($"/expenses/{expense.Id}");
+	}
+	private void DeleteExpense(int? id)
+	{
+		var expenseToDelete= expenses.FirstOrDefault(e => e.Id == id);
+		Service.removeExpense(expenseToDelete);
+		LoadExpenses();
+		StateHasChanged();
+	}
+}

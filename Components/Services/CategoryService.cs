@@ -27,8 +27,7 @@ namespace ExpenseTracker.Components.Services
         public void removeCategory(Category category)
         {
             _context.Categories.Remove(category);
-            _context.SaveChanges();
-            
+            _context.SaveChanges(); 
         }
         
         

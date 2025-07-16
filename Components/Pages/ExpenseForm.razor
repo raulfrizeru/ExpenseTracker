@@ -1,0 +1,62 @@
+﻿@using ExpenseTracker.Components.Data.Models
+@inherits ComponentBase
+
+<EditForm Model="Expense" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="Expense.Title" placeholder="Expense Title" />
+    </div>
+
+    <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <InputDate id="date" class="form-control" @bind-Value="Expense.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <InputNumber id="amount" class="form-control" @bind-Value="Expense.Amount" />
+    </div>
+
+    <div class="mb-3">
+        <label for="planned" class="form-label">Planned</label>
+        <InputCheckbox id="planned" class="form-check-input" @bind-Value="Expense.Planned" />
+    </div>
+
+    <div class="mb-3">
+        <label for="categoryId" class="form-label">Category</label>
+        <InputSelect id="categoryId" class="form-select" @bind-Value="Expense.CategoryId">
+            <option value="">-- Select a Category --</option>
+            @foreach (var category in Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Expense Expense { get; set; } = default!; // modelul pentru binding
+
+    [Parameter]
+    public List<Category> Categories { get; set; } = new(); // pentru dropdown
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; } // callback la submit
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Save";
+
+    private async Task HandleValidSubmit()
+    {
+        if (OnValidSubmit.HasDelegate)
+        {
+            await OnValidSubmit.InvokeAsync();
+        }
+    }
+}

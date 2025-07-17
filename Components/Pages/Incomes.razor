@@ -7,59 +7,118 @@
 
 <h3>Incomes</h3>
 
-<table>
-	<thead>
-		<tr>
-			<th>Title</th>
-			<th>Date</th>
-			<th>Amount</th>
-			<th>Category</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var income in incomes)
-		{
-			<tr>
-				<td>@income.Title</td>
-				<td>@income.Date.ToShortDateString()</td>
-				<td>@income.Amount.ToString("C")</td>
-				<td>@income.Type.ToString()</td>
-				<td>
-					<button class="btn btn-secondary" @onclick="() => EditIncome(income)">Edit</button>
-					<button class="btn btn-danger mb-3" @onclick="() => DeleteIncome(income.Id)">Delete</button>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
+<div class="mb-3">
+    <label class="form-label fw-bold">Start Date:</label>
+    <input type="date" class="form-control w-auto d-inline-block me-2" @bind="startDate" />
+
+    <label class="form-label fw-bold ms-3">End Date:</label>
+    <input type="date" class="form-control w-auto d-inline-block me-2" @bind="endDate" />
+
+    <button class="btn btn-primary ms-2" @onclick="FilterIncomes">Filter</button>
+    <button class="btn btn-secondary ms-2" @onclick="ResetFilter">Reset Filter</button>
+</div>
+
+<div class="alert alert-info">
+    Total Incomes: <strong>@GetTotalFilteredIncome().ToString("C")</strong>
+</div>
+
+
+@if (filteredIncomes.Count == 0)
+{
+    <p>No incomes found for the selected date range.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var income in filteredIncomes)
+            {
+                <tr>
+                    <td>@income.Title</td>
+                    <td>@income.Date.ToShortDateString()</td>
+                    <td>@income.Amount.ToString("C")</td>
+                    <td>@income.Type.ToString()</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm me-2" @onclick="() => EditIncome(income)">Edit</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteIncome(income.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 <button class="btn btn-success mb-3" @onclick="GoToAddIncome">Add Income</button>
 
 @code {
-	List<Income> incomes = new List<Income>();
-	public void LoadIncomes()
-	{
-		incomes = IncomeService.findAllIncomes();
-	}
-	protected override void OnInitialized()
-	{
-		LoadIncomes();
-	}
-	private void EditIncome(Income income)
-	{
-		Navigation.NavigateTo($"/edit-income/{income.Id}");
-	}
-	private void DeleteIncome(int? id)
-	{
-		var incomeToDelete = incomes.FirstOrDefault(i => i.Id == id);
-		if (incomeToDelete != null)
-		{
-			IncomeService.removeIncome(incomeToDelete);
-			LoadIncomes();
-		}
-	}
-	private void GoToAddIncome()
-	{
-		Navigation.NavigateTo("/incomes/new");
-	}
+    List<Income> incomes = new();
+    List<Income> filteredIncomes = new();
+    DateTime? startDate = null;
+    DateTime? endDate = null;
+
+    protected override void OnInitialized()
+    {
+        LoadIncomes();
+    }
+
+    private void LoadIncomes()
+    {
+        incomes = IncomeService.findAllIncomes();
+        filteredIncomes = new List<Income>(incomes); // by default show all
+    }
+
+    private void FilterIncomes()
+    {
+        if (startDate != null && endDate != null && startDate <= endDate)
+        {
+            filteredIncomes = incomes
+            .Where(i => i.Date >= startDate.Value && i.Date <= endDate.Value)
+            .ToList();
+        }
+        else
+        {
+            filteredIncomes = incomes; // fallback
+        }
+    }
+
+    private void ResetFilter()
+    {
+        startDate = null;
+        endDate = null;
+        filteredIncomes = new List<Income>(incomes);
+    }
+
+    private void EditIncome(Income income)
+    {
+        Navigation.NavigateTo($"/edit-income/{income.Id}");
+    }
+
+    private void DeleteIncome(int? id)
+    {
+        var incomeToDelete = incomes.FirstOrDefault(i => i.Id == id);
+        if (incomeToDelete != null)
+        {
+            IncomeService.removeIncome(incomeToDelete);
+            LoadIncomes();
+        }
+    }
+
+    private void GoToAddIncome()
+    {
+        Navigation.NavigateTo("/incomes/new");
+    }
+    private decimal GetTotalFilteredIncome()
+    {
+        return filteredIncomes.Sum(i => i.Amount);
+    }
+
 }

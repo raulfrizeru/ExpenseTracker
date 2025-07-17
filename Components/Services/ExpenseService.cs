@@ -40,5 +40,22 @@ namespace ExpenseTracker.Components.Services
         {
             return _context.Expenses.Include(e => e.Category).Where(e => e.CategoryId == categoryId).ToList();
         }
+        public decimal getTotalExpense()
+		{
+			return _context.Expenses.Sum(e => e.Amount);
+		}
+        public decimal getCurrentMonthExpense()
+        {
+            return _context.Expenses.Where(e => e.Date.Month == DateTime.Now.Month && e.Date.Year == DateTime.Now.Year).Sum(i => i.Amount);
+        }
+
+        public decimal findPlannedExpenses()
+        {
+            return _context.Expenses.Where(i => i.Planned == true).Sum(i => i.Amount);
+        }
+        public decimal findUnplannedExpenses()
+        {
+            return _context.Expenses.Where(i => i.Planned == false).Sum(i => i.Amount);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ExpenseTracker.Components.Data;
 using ExpenseTracker.Components.Data.Models;
+using ExpenseTracker.Components.Pages;
 
 namespace ExpenseTracker.Components.Services
 {
@@ -39,6 +40,21 @@ namespace ExpenseTracker.Components.Services
 		{
 			return _context.Incomes.Where(i => i.Id == id).Single();
 		}
+
+        public decimal getTotalIncome()
+		{
+			return _context.Incomes.Sum(i => i.Amount);
+		}
+        public decimal getCurrentMonthIncome()
+        {
+            return _context.Incomes.Where(i => i.Date.Month == DateTime.Now.Month && i.Date.Year == DateTime.Now.Year)
+				.Sum(i => i.Amount);
+        }
+
+        public List<Income> findIncomesByDateRange(DateTime startDate, DateTime endDate)
+        {
+            return _context.Incomes.Where(i => i.Date >= startDate && i.Date <= endDate).ToList();
+        }
             
     }
 }

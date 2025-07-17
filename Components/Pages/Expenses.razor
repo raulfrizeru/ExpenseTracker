@@ -6,7 +6,21 @@
 @inject NavigationManager Navigation;
 
 <h3>Expenses</h3>
-<table>
+
+<div class="mb-3">
+	<label for="filter" class="form-label fw-bold">Filter expenses:</label>
+	<select id="filter" class="form-select w-auto d-inline-block" @onchange="OnFilterChanged">
+		<option value="All" selected>All</option>
+		<option value="Planned">Planned</option>
+		<option value="Unplanned">Unplanned</option>
+	</select>
+</div>
+
+<div class="alert alert-info">
+	Total Expenses: <strong>@GetTotalFilteredExpenses().ToString("C")</strong>
+</div>
+
+<table class="table table-striped">
 	<thead>
 		<tr>
 			<th>Title</th>
@@ -14,10 +28,11 @@
 			<th>Amount</th>
 			<th>Planned</th>
 			<th>Category</th>
+			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
-		@foreach (var expense in expenses)
+		@foreach (var expense in filteredExpenses)
 		{
 			<tr>
 				<td>@expense.Title</td>
@@ -37,6 +52,9 @@
 
 @code {
 	List<Expense> expenses = new List<Expense>();
+	List<Expense> filteredExpenses = new List<Expense>();
+	string selectedFilter = "All";
+
 	public void LoadExpenses()
 	{
 		expenses=Service.findAllExpenses().ToList();
@@ -44,6 +62,28 @@
 	protected override void OnInitialized()
 	{
 		LoadExpenses();
+		ApplyFilter();
+	}
+	private void ApplyFilter()
+	{
+		if (selectedFilter == "Planned")
+		{
+			filteredExpenses = expenses.Where(e => e.Planned).ToList();
+		}
+		else if (selectedFilter == "Unplanned")
+		{
+			filteredExpenses = expenses.Where(e => !e.Planned).ToList();
+		}
+		else // All
+		{
+			filteredExpenses = expenses;
+		}
+	}
+	private void OnFilterChanged(ChangeEventArgs e)
+	{
+		selectedFilter = e.Value?.ToString() ?? "All";
+		ApplyFilter();
+		StateHasChanged();
 	}
 	private void GoToAddExpense()
 	{
@@ -56,8 +96,15 @@
 	private void DeleteExpense(int? id)
 	{
 		var expenseToDelete= expenses.FirstOrDefault(e => e.Id == id);
-		Service.removeExpense(expenseToDelete);
-		LoadExpenses();
-		StateHasChanged();
+		if (expenseToDelete != null)
+		{
+			Service.removeExpense(expenseToDelete);
+			LoadExpenses();
+			StateHasChanged();
+		}
+	}
+	private decimal GetTotalFilteredExpenses()
+	{
+		return filteredExpenses.Sum(e => e.Amount);
 	}
 }

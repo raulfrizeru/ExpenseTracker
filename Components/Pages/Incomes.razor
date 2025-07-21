@@ -5,59 +5,427 @@
 @inject IncomeService IncomeService
 @inject NavigationManager Navigation
 
-<h3>Incomes</h3>
+<PageTitle>Incomes</PageTitle>
 
-<div class="mb-3">
-    <label class="form-label fw-bold">Start Date:</label>
-    <input type="date" class="form-control w-auto d-inline-block me-2" @bind="startDate" />
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        min-height: 100vh;
+    }
 
-    <label class="form-label fw-bold ms-3">End Date:</label>
-    <input type="date" class="form-control w-auto d-inline-block me-2" @bind="endDate" />
+    .glass-container {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
 
-    <button class="btn btn-primary ms-2" @onclick="FilterIncomes">Filter</button>
-    <button class="btn btn-secondary ms-2" @onclick="ResetFilter">Reset Filter</button>
-</div>
+    .glass-table {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+    }
 
-<div class="alert alert-info">
-    Total Incomes: <strong>@GetTotalFilteredIncome().ToString("C")</strong>
-</div>
+    .apple-title {
+        font-weight: 600;
+        color: #1d1d1f;
+        letter-spacing: -0.022em;
+    }
 
+    .apple-subtitle {
+        color: #86868b;
+        font-weight: 400;
+    }
 
-@if (filteredIncomes.Count == 0)
-{
-    <p>No incomes found for the selected date range.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var income in filteredIncomes)
-            {
-                <tr>
-                    <td>@income.Title</td>
-                    <td>@income.Date.ToShortDateString()</td>
-                    <td>@income.Amount.ToString("C")</td>
-                    <td>@income.Type.ToString()</td>
-                    <td>
-                        <button class="btn btn-secondary btn-sm me-2" @onclick="() => EditIncome(income)">Edit</button>
-                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteIncome(income.Id)">Delete</button>
-                    </td>
-                </tr>
+    .apple-btn {
+        border-radius: 12px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border: none;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+    .apple-btn-primary {
+        background: #007aff;
+        color: white;
+    }
+
+        .apple-btn-primary:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+    .apple-btn-success {
+        background: #34c759;
+        color: white;
+    }
+
+        .apple-btn-success:hover {
+            background: #28a745;
+            transform: translateY(-1px);
+        }
+
+    .apple-btn-secondary {
+        background: rgba(142, 142, 147, 0.2);
+        color: #1d1d1f;
+        border: 1px solid rgba(142, 142, 147, 0.3);
+    }
+
+        .apple-btn-secondary:hover {
+            background: rgba(142, 142, 147, 0.3);
+            transform: translateY(-1px);
+        }
+
+    .apple-input {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .apple-input:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            outline: none;
+        }
+
+    .summary-card {
+        background: linear-gradient(135deg, rgba(52, 199, 89, 0.15) 0%, rgba(52, 199, 89, 0.05) 100%);
+        border: 1px solid rgba(52, 199, 89, 0.2);
+        border-radius: 16px;
+        padding: 16px 20px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    .total-amount {
+        font-weight: 700;
+        color: #34c759;
+        font-size: 1.2rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #86868b;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+            .table thead th {
+                padding: 16px 12px;
+                font-weight: 600;
+                color: #86868b;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border: none;
             }
-        </tbody>
-    </table>
-}
 
-<button class="btn btn-success mb-3" @onclick="GoToAddIncome">Add Income</button>
+        .table tbody tr {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+            .table tbody tr:hover {
+                background: rgba(255, 255, 255, 0.6);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+
+        .table tbody td {
+            border: none;
+            padding: 16px 12px;
+            vertical-align: middle;
+        }
+
+    .badge {
+        background: rgba(52, 199, 89, 0.1);
+        color: #34c759;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .bg-success {
+        background: rgba(52, 199, 89, 0.1) !important;
+        color: #34c759 !important;
+    }
+
+    .fw-bold {
+        font-weight: 700 !important;
+    }
+
+    .text-success {
+        color: #34c759 !important;
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+        margin: 0 2px;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+    .btn-outline-primary {
+        color: #007aff;
+        border-color: rgba(0, 122, 255, 0.2);
+    }
+
+        .btn-outline-primary:hover {
+            background: rgba(0, 122, 255, 0.1);
+            border-color: #007aff;
+            color: #007aff;
+        }
+
+    .btn-outline-danger {
+        color: #ff3b30;
+        border-color: rgba(255, 59, 48, 0.2);
+    }
+
+        .btn-outline-danger:hover {
+            background: rgba(255, 59, 48, 0.1);
+            border-color: #ff3b30;
+            color: #ff3b30;
+        }
+
+    .filter-label {
+        font-weight: 500;
+        color: #1d1d1f;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    .me-1 {
+        margin-right: 0.25rem;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+
+    .p-3 {
+        padding: 1rem;
+    }
+
+    .p-4 {
+        padding: 1.5rem;
+    }
+
+    .py-5 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .px-4 {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .g-3 {
+        gap: 1rem;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .col-md-2 {
+        flex: 0 0 16.666667%;
+        max-width: 16.666667%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .container-fluid {
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .table-hover tbody tr:hover {
+        background: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+</style>
+
+<div class="container-fluid px-4 py-5" style="max-width: 1400px;">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="apple-title" style="font-size: 3rem; margin-bottom: 0.5rem;">
+            Incomes
+        </h1>
+        <p class="apple-subtitle" style="font-size: 1.1rem;">
+            Monitor your earnings with ease
+        </p>
+    </div>
+
+    <div class="glass-container p-4 mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-md-3">
+                <label class="filter-label">📅 Start Date</label>
+                <input type="date" class="apple-input w-100" @bind="startDate" />
+            </div>
+            <div class="col-md-3">
+                <label class="filter-label">📅 End Date</label>
+                <input type="date" class="apple-input w-100" @bind="endDate" />
+            </div>
+            <div class="col-md-2">
+                <label class="filter-label" style="opacity: 0;">Actions</label>
+                <div class="d-flex gap-2">
+                    <button class="apple-btn apple-btn-primary" @onclick="FilterIncomes">
+                        🔍 Filter
+                    </button>
+                    <button class="apple-btn apple-btn-secondary" @onclick="ResetFilter">
+                        ↻ Reset
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="summary-card text-center">
+                    <div style="font-size: 0.85rem; color: #86868b; margin-bottom: 4px;">Total Income</div>
+                    <div class="total-amount">@GetTotalFilteredIncome().ToString("N2") RON</div>
+                </div>
+            </div>
+            <div class="col-md-2 text-end">
+                <button class="apple-btn apple-btn-success" @onclick="GoToAddIncome">
+                    ➕ Add Income
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Income Table -->
+    @if (filteredIncomes.Count == 0)
+    {
+        <div class="glass-container">
+            <div class="empty-state">
+                <div class="empty-state-icon">💰</div>
+                <h4 style="font-weight: 500; margin-bottom: 12px;">No incomes found</h4>
+                <p>Try adjusting your date range or add your first income</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="glass-container p-3">
+            <table class="table table-hover glass-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th class="text-end">Amount (RON)</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var income in filteredIncomes)
+                    {
+                        <tr>
+                            <td>@income.Title</td>
+                            <td>@income.Date.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <span class="badge bg-success">@income.Type</span>
+                            </td>
+                            <td class="text-end fw-bold text-success">@income.Amount.ToString("N2")</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary me-1" @onclick="() => EditIncome(income)">
+                                    ✏️
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteIncome(income.Id)">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
 
 @code {
     List<Income> incomes = new();
@@ -73,7 +441,7 @@ else
     private void LoadIncomes()
     {
         incomes = IncomeService.findAllIncomes();
-        filteredIncomes = new List<Income>(incomes); // by default show all
+        filteredIncomes = new(incomes); // Show all by default
     }
 
     private void FilterIncomes()
@@ -81,20 +449,22 @@ else
         if (startDate != null && endDate != null && startDate <= endDate)
         {
             filteredIncomes = incomes
-            .Where(i => i.Date >= startDate.Value && i.Date <= endDate.Value)
-            .ToList();
+                .Where(i => i.Date >= startDate.Value && i.Date <= endDate.Value)
+                .ToList();
         }
         else
         {
-            filteredIncomes = incomes; // fallback
+            filteredIncomes = new(incomes); // fallback
         }
+        StateHasChanged();
     }
 
     private void ResetFilter()
     {
         startDate = null;
         endDate = null;
-        filteredIncomes = new List<Income>(incomes);
+        filteredIncomes = new(incomes);
+        StateHasChanged();
     }
 
     private void EditIncome(Income income)
@@ -109,6 +479,7 @@ else
         {
             IncomeService.removeIncome(incomeToDelete);
             LoadIncomes();
+            FilterIncomes();
         }
     }
 
@@ -116,9 +487,9 @@ else
     {
         Navigation.NavigateTo("/incomes/new");
     }
+
     private decimal GetTotalFilteredIncome()
     {
         return filteredIncomes.Sum(i => i.Amount);
     }
-
 }

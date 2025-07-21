@@ -1,45 +1,122 @@
 ﻿@using ExpenseTracker.Components.Data.Models
 @inherits ComponentBase
 
-<EditForm Model="Income" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="Income" OnValidSubmit="HandleValidSubmit" class="glass-container p-4" style="max-width: 600px; margin: 0 auto;">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    <ValidationSummary class="validation-summary" />
 
-    <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <InputText id="title" class="form-control" @bind-Value="Income.Title" placeholder="Income Title" />
+    <div class="mb-4">
+        <label for="title" class="apple-label">Title</label>
+        <InputText id="title" class="apple-input w-100" @bind-Value="Income.Title" placeholder="💼 Income Title" />
     </div>
 
-    <div class="mb-3">
-        <label for="date" class="form-label">Date</label>
-        <InputDate id="date" class="form-control" @bind-Value="Income.Date" />
+    <div class="mb-4">
+        <label for="date" class="apple-label">Date</label>
+        <InputDate id="date" class="apple-input w-100" @bind-Value="Income.Date" />
     </div>
 
-    <div class="mb-3">
-        <label for="amount" class="form-label">Amount</label>
-        <InputNumber id="amount" class="form-control" @bind-Value="Income.Amount" />
+    <div class="mb-4">
+        <label for="amount" class="apple-label">Amount</label>
+        <InputNumber id="amount" class="apple-input w-100" @bind-Value="Income.Amount" placeholder="💰 0.00" />
     </div>
 
-    <div class="mb-3">
-        <label for="type" class="form-label">Type</label>
-        <InputSelect id="type" class="form-select" @bind-Value="Income.Type">
+    <div class="mb-4">
+        <label for="type" class="apple-label">Type</label>
+        <InputSelect id="type" class="apple-select w-100" @bind-Value="Income.Type">
             @foreach (var type in Enum.GetValues<IncomeType>())
             {
                 <option value="@type">@type</option>
             }
         </InputSelect>
-
     </div>
 
-    <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
+    <button type="submit" class="apple-btn apple-btn-primary w-100">@SubmitButtonText</button>
 </EditForm>
+
+<style>
+    .glass-container {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .apple-label {
+        font-weight: 500;
+        color: #1d1d1f;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+
+    .apple-input {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .apple-input:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            outline: none;
+        }
+
+    .apple-select {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .apple-select:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            outline: none;
+        }
+
+    .apple-btn {
+        border-radius: 12px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border: none;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .apple-btn-primary {
+        background: #007aff;
+        color: white;
+    }
+
+        .apple-btn-primary:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+    .validation-summary {
+        color: #ff3b30;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+</style>
 
 @code {
     [Parameter]
-    public Income Income { get; set; } = default!; 
+    public Income Income { get; set; } = default!; // model for binding
 
     [Parameter]
-    public EventCallback OnValidSubmit { get; set; } 
+    public EventCallback OnValidSubmit { get; set; } // callback on submit
 
     [Parameter]
     public string SubmitButtonText { get; set; } = "Save";

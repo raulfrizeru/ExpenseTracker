@@ -1,33 +1,33 @@
 ﻿@using ExpenseTracker.Components.Data.Models
 @inherits ComponentBase
 
-<EditForm Model="Expense" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="Expense" OnValidSubmit="HandleValidSubmit" class="glass-container p-4" style="max-width: 600px; margin: 0 auto;">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    <ValidationSummary class="validation-summary" />
 
-    <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <InputText id="title" class="form-control" @bind-Value="Expense.Title" placeholder="Expense Title" />
+    <div class="mb-4">
+        <label for="title" class="apple-label">Title</label>
+        <InputText id="title" class="apple-input w-100" @bind-Value="Expense.Title" placeholder="💡 Expense Title" />
     </div>
 
-    <div class="mb-3">
-        <label for="date" class="form-label">Date</label>
-        <InputDate id="date" class="form-control" @bind-Value="Expense.Date" />
+    <div class="mb-4">
+        <label for="date" class="apple-label">Date</label>
+        <InputDate id="date" class="apple-input w-100" @bind-Value="Expense.Date" />
     </div>
 
-    <div class="mb-3">
-        <label for="amount" class="form-label">Amount</label>
-        <InputNumber id="amount" class="form-control" @bind-Value="Expense.Amount" />
+    <div class="mb-4">
+        <label for="amount" class="apple-label">Amount</label>
+        <InputNumber id="amount" class="apple-input w-100" @bind-Value="Expense.Amount" placeholder="💸 0.00" />
     </div>
 
-    <div class="mb-3">
-        <label for="planned" class="form-label">Planned</label>
-        <InputCheckbox id="planned" class="form-check-input" @bind-Value="Expense.Planned" />
+    <div class="mb-4 form-check">
+        <InputCheckbox id="planned" class="apple-checkbox form-check-input" @bind-Value="Expense.Planned" />
+        <label for="planned" class="apple-label ms-2">Planned Expense</label>
     </div>
 
-    <div class="mb-3">
-        <label for="categoryId" class="form-label">Category</label>
-        <InputSelect id="categoryId" class="form-select" @bind-Value="Expense.CategoryId">
+    <div class="mb-4">
+        <label for="categoryId" class="apple-label">Category</label>
+        <InputSelect id="categoryId" class="apple-select w-100" @bind-Value="Expense.CategoryId">
             <option value="">-- Select a Category --</option>
             @foreach (var category in Categories)
             {
@@ -36,18 +36,102 @@
         </InputSelect>
     </div>
 
-    <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
+    <button type="submit" class="apple-btn apple-btn-primary w-100">@SubmitButtonText</button>
 </EditForm>
+
+<style>
+    .glass-container {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .apple-label {
+        font-weight: 500;
+        color: #1d1d1f;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+    }
+
+    .apple-input {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .apple-input:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            outline: none;
+        }
+
+    .apple-select {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+
+        .apple-select:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            outline: none;
+        }
+
+    .apple-checkbox {
+        accent-color: #007aff;
+        transform: scale(1.2);
+        margin-top: 3px;
+    }
+
+    .apple-btn {
+        border-radius: 12px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border: none;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .apple-btn-primary {
+        background: #007aff;
+        color: white;
+    }
+
+        .apple-btn-primary:hover {
+            background: #0056cc;
+            transform: translateY(-1px);
+        }
+
+    .validation-summary {
+        color: #ff3b30;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+</style>
 
 @code {
     [Parameter]
-    public Expense Expense { get; set; } = default!; // modelul pentru binding
+    public Expense Expense { get; set; } = default!; // model for binding
 
     [Parameter]
-    public List<Category> Categories { get; set; } = new(); // pentru dropdown
+    public List<Category> Categories { get; set; } = new(); // dropdown
 
     [Parameter]
-    public EventCallback OnValidSubmit { get; set; } // callback la submit
+    public EventCallback OnValidSubmit { get; set; } // callback on submit
 
     [Parameter]
     public string SubmitButtonText { get; set; } = "Save";

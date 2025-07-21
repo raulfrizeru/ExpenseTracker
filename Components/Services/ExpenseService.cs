@@ -16,7 +16,7 @@ namespace ExpenseTracker.Components.Services
 
         public List<Expense> findAllExpenses()
         {
-            return _context.Expenses.Include(e => e.Category).ToList(); ;
+            return _context.Expenses.Include(e => e.Category).ToList();
         }
         public Expense addExpense(Expense expense)
         {
@@ -56,6 +56,22 @@ namespace ExpenseTracker.Components.Services
         public decimal findUnplannedExpenses()
         {
             return _context.Expenses.Where(i => i.Planned == false).Sum(i => i.Amount);
+        }
+        public Category getBiggestExpenseCategory()
+        {
+            var categories = _context.Categories.ToList();
+            decimal max=0, currentMax = 0;
+            Category? maxCategory=null;
+            foreach (var category in categories)
+            {
+                currentMax= _context.Expenses.Include(e => e.Category).Where(e => e.CategoryId == category.Id).Sum(e => e.Amount);
+                if (currentMax > max) 
+                {
+                    max = currentMax;
+                    maxCategory= category;
+                }
+            }
+            return maxCategory;
         }
     }
 }

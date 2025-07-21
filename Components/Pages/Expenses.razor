@@ -5,106 +5,360 @@
 @inject ExpenseService Service;
 @inject NavigationManager Navigation;
 
-<h3>Expenses</h3>
+<PageTitle>Expenses</PageTitle>
 
-<div class="mb-3">
-	<label for="filter" class="form-label fw-bold">Filter expenses:</label>
-	<select id="filter" class="form-select w-auto d-inline-block" @onchange="OnFilterChanged">
-		<option value="All" selected>All</option>
-		<option value="Planned">Planned</option>
-		<option value="Unplanned">Unplanned</option>
-	</select>
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        min-height: 100vh;
+    }
+
+    .glass-container {
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .glass-table {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+    }
+
+    .apple-title {
+        font-weight: 600;
+        color: #1d1d1f;
+        letter-spacing: -0.022em;
+    }
+
+    .apple-subtitle {
+        color: #86868b;
+        font-weight: 400;
+    }
+
+    .apple-btn {
+        border-radius: 12px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border: none;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+
+    .apple-btn-primary {
+        background: #007aff;
+        color: white;
+    }
+
+    .apple-btn-primary:hover {
+        background: #0056cc;
+        transform: translateY(-1px);
+    }
+
+    .apple-btn-success {
+        background: #34c759;
+        color: white;
+    }
+
+    .apple-btn-success:hover {
+        background: #28a745;
+        transform: translateY(-1px);
+    }
+
+    .apple-select {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .apple-select:focus {
+        border-color: #007aff;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        outline: none;
+    }
+
+    .expense-row {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .expense-row:hover {
+        background: rgba(255, 255, 255, 0.6);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .expense-row td {
+        border: none;
+        padding: 16px 12px;
+        vertical-align: middle;
+    }
+
+    .expense-title {
+        font-weight: 600;
+        color: #1d1d1f;
+        font-size: 1rem;
+    }
+
+    .expense-category {
+        background: rgba(0, 122, 255, 0.1);
+        color: #007aff;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .expense-amount {
+        font-weight: 700;
+        color: #1d1d1f;
+        font-size: 1.1rem;
+    }
+
+    .expense-date {
+        color: #86868b;
+        font-size: 0.9rem;
+    }
+
+    .badge-planned {
+        background: linear-gradient(135deg, #34c759, #28a745);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .badge-unplanned {
+        background: linear-gradient(135deg, #8e8e93, #6d6d70);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+        margin: 0 2px;
+    }
+
+    .action-btn:hover {
+        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .action-btn-edit {
+        color: #007aff;
+    }
+
+    .action-btn-delete {
+        color: #ff3b30;
+    }
+
+    .summary-card {
+        background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+        border: 1px solid rgba(0, 122, 255, 0.2);
+        border-radius: 16px;
+        padding: 16px 20px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    .total-amount {
+        font-weight: 700;
+        color: #007aff;
+        font-size: 1.2rem;
+    }
+
+    
+</style>
+
+<div class="container-fluid px-4 py-5" style="max-width: 1400px;">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="apple-title" style="font-size: 3rem; margin-bottom: 0.5rem;">
+            Expenses
+        </h1>
+        <p class="apple-subtitle" style="font-size: 1.1rem;">
+            Track and manage your spending
+        </p>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="glass-container p-4 mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-md-4">
+                <label class="form-label" style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                    🔍 Filter expenses
+                </label>
+                <select class="apple-select w-100" @onchange="OnFilterChanged">
+                    <option value="All" selected>All Expenses</option>
+                    <option value="Planned">📋 Planned Only</option>
+                    <option value="Unplanned">⚡ Unplanned Only</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-card text-center">
+                    <div style="font-size: 0.85rem; color: #86868b; margin-bottom: 4px;">Total Filtered</div>
+                    <div class="total-amount">@GetTotalFilteredExpenses().ToString("N2") RON</div>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="apple-btn apple-btn-success" @onclick="GoToAddExpense">
+                    ➕ Add New Expense
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="glass-table">
+        @if (filteredExpenses.Count == 0)
+        {
+            <div class="text-center py-5">
+                <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">💸</div>
+                <h4 style="color: #86868b; font-weight: 500;">No expenses found</h4>
+                <p style="color: #86868b;">Try adjusting your filter or add your first expense</p>
+            </div>
+        }
+        else
+        {
+            <table class="table table-borderless mb-0">
+                <thead style="background: rgba(0, 0, 0, 0.02); border-bottom: 1px solid rgba(0, 0, 0, 0.05);">
+                    <tr>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Expense</th>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Category</th>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Date</th>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Type</th>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">Amount</th>
+                        <th style="padding: 16px 12px; font-weight: 600; color: #86868b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in filteredExpenses)
+                    {
+                        <tr class="expense-row">
+                            <td>
+                                <div class="expense-title">@expense.Title</div>
+                            </td>
+                            <td>
+                                <span class="expense-category">
+                                    @(expense.Category?.Name ?? "Uncategorized")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="expense-date">@expense.Date.ToString("dd MMM yyyy")</div>
+                            </td>
+                            <td>
+                                <span class="@(expense.Planned ? "badge-planned" : "badge-unplanned")">
+                                    @(expense.Planned ? "📋 Planned" : "⚡ Unplanned")
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div class="expense-amount">@expense.Amount.ToString("N2") RON</div>
+                            </td>
+                            <td style="text-align: center;">
+                                <button class="action-btn action-btn-edit" @onclick="() => EditExpense(expense)">
+                                    ✏️ Edit
+                                </button>
+                                <button class="action-btn action-btn-delete" @onclick="() => DeleteExpense(expense.Id)">
+                                    🗑️ Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
 </div>
-
-<div class="alert alert-info">
-	Total Expenses: <strong>@GetTotalFilteredExpenses().ToString("C")</strong>
-</div>
-
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Title</th>
-			<th>Date</th>
-			<th>Amount</th>
-			<th>Planned</th>
-			<th>Category</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var expense in filteredExpenses)
-		{
-			<tr>
-				<td>@expense.Title</td>
-				<td>@expense.Date.ToShortDateString()</td>
-				<td>@expense.Amount.ToString("C")</td>
-				<td>@(expense.Planned ? "Yes" : "No")</td>
-				<td>@(expense.Category?.Name ?? "Uncategorized")</td>
-				<td>
-					<button class="btn btn-secondary" @onclick="()=>EditExpense(expense)">Edit</button>
-					<button class="btn btn-danger mb-3" @onclick="() => DeleteExpense(expense.Id)">Delete</button>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
-<button class="btn btn-success mb-3" @onclick="GoToAddExpense">Add New Expense</button>
 
 @code {
-	List<Expense> expenses = new List<Expense>();
-	List<Expense> filteredExpenses = new List<Expense>();
-	string selectedFilter = "All";
+    List<Expense> expenses = new();
+    List<Expense> filteredExpenses = new();
+    string selectedFilter = "All";
 
-	public void LoadExpenses()
-	{
-		expenses=Service.findAllExpenses().ToList();
-	}
-	protected override void OnInitialized()
-	{
-		LoadExpenses();
-		ApplyFilter();
-	}
-	private void ApplyFilter()
-	{
-		if (selectedFilter == "Planned")
-		{
-			filteredExpenses = expenses.Where(e => e.Planned).ToList();
-		}
-		else if (selectedFilter == "Unplanned")
-		{
-			filteredExpenses = expenses.Where(e => !e.Planned).ToList();
-		}
-		else // All
-		{
-			filteredExpenses = expenses;
-		}
-	}
-	private void OnFilterChanged(ChangeEventArgs e)
-	{
-		selectedFilter = e.Value?.ToString() ?? "All";
-		ApplyFilter();
-		StateHasChanged();
-	}
-	private void GoToAddExpense()
-	{
-		Navigation.NavigateTo("/expenses/new");
-	}
-	private void EditExpense(Expense expense)
-	{
-		Navigation.NavigateTo($"/expenses/{expense.Id}");
-	}
-	private void DeleteExpense(int? id)
-	{
-		var expenseToDelete= expenses.FirstOrDefault(e => e.Id == id);
-		if (expenseToDelete != null)
-		{
-			Service.removeExpense(expenseToDelete);
-			LoadExpenses();
-			StateHasChanged();
-		}
-	}
-	private decimal GetTotalFilteredExpenses()
-	{
-		return filteredExpenses.Sum(e => e.Amount);
-	}
+    public void LoadExpenses()
+    {
+        expenses = Service.findAllExpenses().ToList();
+    }
+    
+    protected override void OnInitialized()
+    {
+        LoadExpenses();
+        ApplyFilter();
+    }
+    
+    private void ApplyFilter()
+    {
+        if (selectedFilter == "Planned")
+        {
+            filteredExpenses = expenses.Where(e => e.Planned).ToList();
+        }
+        else if (selectedFilter == "Unplanned")
+        {
+            filteredExpenses = expenses.Where(e => !e.Planned).ToList();
+        }
+        else // All
+        {
+            filteredExpenses = expenses;
+        }
+    }
+    
+    private void OnFilterChanged(ChangeEventArgs e)
+    {
+        selectedFilter = e.Value?.ToString() ?? "All";
+        ApplyFilter();
+        StateHasChanged();
+    }
+    
+    private void GoToAddExpense()
+    {
+        Navigation.NavigateTo("/expenses/new");
+    }
+    
+    private void EditExpense(Expense expense)
+    {
+        Navigation.NavigateTo($"/expenses/{expense.Id}");
+    }
+    
+    private void DeleteExpense(int? id)
+    {
+        var expenseToDelete = expenses.FirstOrDefault(e => e.Id == id);
+        if (expenseToDelete != null)
+        {
+            Service.removeExpense(expenseToDelete);
+            LoadExpenses();
+            ApplyFilter();
+            StateHasChanged();
+        }
+    }
+    
+    private decimal GetTotalFilteredExpenses()
+    {
+        return filteredExpenses.Sum(e => e.Amount);
+    }
 }

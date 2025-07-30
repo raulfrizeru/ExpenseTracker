@@ -8,136 +8,6 @@
 
 <PageTitle>Expense Tracker</PageTitle>
 
-<style>
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-        min-height: 100vh;
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-    .balance-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
-        backdrop-filter: blur(30px);
-        -webkit-backdrop-filter: blur(30px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        border-radius: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .income-card {
-        background: linear-gradient(135deg, rgba(52, 199, 89, 0.15) 0%, rgba(52, 199, 89, 0.05) 100%);
-        border: 1px solid rgba(52, 199, 89, 0.2);
-    }
-
-    .expense-card {
-        background: linear-gradient(135deg, rgba(255, 59, 48, 0.15) 0%, rgba(255, 59, 48, 0.05) 100%);
-        border: 1px solid rgba(255, 59, 48, 0.2);
-    }
-
-    .category-card {
-        background: linear-gradient(135deg, rgba(255, 149, 0, 0.15) 0%, rgba(255, 149, 0, 0.05) 100%);
-        border: 1px solid rgba(255, 149, 0, 0.2);
-    }
-
-    .planned-card {
-        background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
-        border: 1px solid rgba(0, 122, 255, 0.2);
-    }
-
-    .unplanned-card {
-        background: linear-gradient(135deg, rgba(142, 142, 147, 0.15) 0%, rgba(142, 142, 147, 0.05) 100%);
-        border: 1px solid rgba(142, 142, 147, 0.2);
-    }
-
-    .apple-title {
-        font-weight: 600;
-        color: #1d1d1f;
-        letter-spacing: -0.022em;
-    }
-
-    .apple-subtitle {
-        color: #86868b;
-        font-weight: 400;
-    }
-
-    .apple-balance {
-        font-weight: 700;
-        letter-spacing: -0.025em;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .apple-stat-title {
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        opacity: 0.8;
-    }
-
-    .apple-stat-value {
-        font-weight: 600;
-        letter-spacing: -0.02em;
-    }
-
-    .apple-date-range {
-        font-size: 0.7rem;
-        color: #86868b;
-        font-weight: 400;
-    }
-
-    .text-apple-green {
-        color: #34c759;
-    }
-
-    .text-apple-red {
-        color: #ff3b30;
-    }
-
-    .text-apple-orange {
-        color: #ff9500;
-    }
-
-    .text-apple-blue {
-        color: #007aff;
-    }
-
-    .text-apple-gray {
-        color: #8e8e93;
-    }
-
-    .compact-card {
-        min-height: auto;
-    }
-
-    .small-stat {
-        font-size: 0.85rem;
-    }
-
-    .compact-balance {
-        font-size: 2.5rem;
-    }
-
-    .compact-value {
-        font-size: 1.1rem;
-    }
-</style>
-
 <div class="container-fluid px-3 py-3" style="max-width: 1400px;">
     <!-- Header -->
     <div class="text-center mb-3">
@@ -371,6 +241,138 @@
         }
     </div>
 </div>
+
+<style>
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        min-height: 100vh;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+    .balance-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .income-card {
+        background: linear-gradient(135deg, rgba(52, 199, 89, 0.15) 0%, rgba(52, 199, 89, 0.05) 100%);
+        border: 1px solid rgba(52, 199, 89, 0.2);
+    }
+
+    .expense-card {
+        background: linear-gradient(135deg, rgba(255, 59, 48, 0.15) 0%, rgba(255, 59, 48, 0.05) 100%);
+        border: 1px solid rgba(255, 59, 48, 0.2);
+    }
+
+    .category-card {
+        background: linear-gradient(135deg, rgba(255, 149, 0, 0.15) 0%, rgba(255, 149, 0, 0.05) 100%);
+        border: 1px solid rgba(255, 149, 0, 0.2);
+    }
+
+    .planned-card {
+        background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+        border: 1px solid rgba(0, 122, 255, 0.2);
+    }
+
+    .unplanned-card {
+        background: linear-gradient(135deg, rgba(142, 142, 147, 0.15) 0%, rgba(142, 142, 147, 0.05) 100%);
+        border: 1px solid rgba(142, 142, 147, 0.2);
+    }
+
+    .apple-title {
+        font-weight: 600;
+        color: #1d1d1f;
+        letter-spacing: -0.022em;
+    }
+
+    .apple-subtitle {
+        color: #86868b;
+        font-weight: 400;
+    }
+
+    .apple-balance {
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .apple-stat-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.8;
+    }
+
+    .apple-stat-value {
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    .apple-date-range {
+        font-size: 0.7rem;
+        color: #86868b;
+        font-weight: 400;
+    }
+
+    .text-apple-green {
+        color: #34c759;
+    }
+
+    .text-apple-red {
+        color: #ff3b30;
+    }
+
+    .text-apple-orange {
+        color: #ff9500;
+    }
+
+    .text-apple-blue {
+        color: #007aff;
+    }
+
+    .text-apple-gray {
+        color: #8e8e93;
+    }
+
+    .compact-card {
+        min-height: auto;
+    }
+
+    .small-stat {
+        font-size: 0.85rem;
+    }
+
+    .compact-balance {
+        font-size: 2.5rem;
+    }
+
+    .compact-value {
+        font-size: 1.1rem;
+    }
+
+</style>
 
 @code {
     List<Income> incomes = new();

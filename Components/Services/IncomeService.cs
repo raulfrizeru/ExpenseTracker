@@ -14,7 +14,7 @@ namespace ExpenseTracker.Components.Services
 
         public List<Income> findAllIncomes()
         {
-           return _context.Incomes.ToList();
+           return _context.Incomes.OrderByDescending(e => e.Date).ToList();
         }
 
         public Income addIncome(Income income)

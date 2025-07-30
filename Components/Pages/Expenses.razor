@@ -212,7 +212,29 @@
         <div class="row align-items-center g-3">
             <div class="col-md-4">
                 <label class="form-label" style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
-                    🔍 Filter expenses
+                    📅 Filter by Date
+                </label>
+                <div class="d-flex gap-2">
+                    <input class="form-control" @bind:after="ApplyFilter" type="date" @bind="startDate" />
+                    <input class="form-control" @bind:after="ApplyFilter" type="date" @bind="endDate" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label" style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                    ↕️ Sort By
+                </label>
+                <select class="apple-select w-100" @onchange="OnSortChanged">
+                    <option value="">None</option>
+                    <option value="date-asc">📆 Date Ascending</option>
+                    <option value="date-desc">📆 Date Descending</option>
+                    <option value="amount-asc">💸 Amount Ascending</option>
+                    <option value="amount-desc">💸 Amount Descending</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" style="font-weight: 500; color: #1d1d1f; margin-bottom: 8px;">
+                    🔍 Filter by planned
                 </label>
                 <select class="apple-select w-100" @onchange="OnFilterChanged">
                     <option value="All" selected>All Expenses</option>
@@ -220,6 +242,7 @@
                     <option value="Unplanned">⚡ Unplanned Only</option>
                 </select>
             </div>
+
             <div class="col-md-4">
                 <div class="summary-card text-center">
                     <div style="font-size: 0.85rem; color: #86868b; margin-bottom: 4px;">Total Filtered</div>
@@ -300,6 +323,9 @@
     List<Expense> expenses = new();
     List<Expense> filteredExpenses = new();
     string selectedFilter = "All";
+    DateTime? startDate = null;
+    DateTime? endDate = null;
+    string sortOption = "";
 
     public void LoadExpenses()
     {
@@ -314,23 +340,42 @@
     
     private void ApplyFilter()
     {
+        IEnumerable<Expense> query = expenses;
+
+        // Filtrare după planned
         if (selectedFilter == "Planned")
-        {
-            filteredExpenses = expenses.Where(e => e.Planned).ToList();
-        }
+            query = query.Where(e => e.Planned);
         else if (selectedFilter == "Unplanned")
+            query = query.Where(e => !e.Planned);
+
+        // Filtrare după dată
+        if (startDate.HasValue)
+            query = query.Where(e => e.Date >= startDate.Value);
+        if (endDate.HasValue)
+            query = query.Where(e => e.Date <= endDate.Value);
+
+        // Sortare
+        query = sortOption switch
         {
-            filteredExpenses = expenses.Where(e => !e.Planned).ToList();
-        }
-        else // All
-        {
-            filteredExpenses = expenses;
-        }
+            "date-asc" => query.OrderBy(e => e.Date),
+            "date-desc" => query.OrderByDescending(e => e.Date),
+            "amount-asc" => query.OrderBy(e => e.Amount),
+            "amount-desc" => query.OrderByDescending(e => e.Amount),
+            _ => query
+        };
+
+        filteredExpenses = query.ToList();
     }
     
     private void OnFilterChanged(ChangeEventArgs e)
     {
         selectedFilter = e.Value?.ToString() ?? "All";
+        ApplyFilter();
+        StateHasChanged();
+    }
+    private void OnSortChanged(ChangeEventArgs e)
+    {
+        sortOption = e.Value?.ToString() ?? "";
         ApplyFilter();
         StateHasChanged();
     }

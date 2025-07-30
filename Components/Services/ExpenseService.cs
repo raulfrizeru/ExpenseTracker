@@ -16,7 +16,7 @@ namespace ExpenseTracker.Components.Services
 
         public List<Expense> findAllExpenses()
         {
-            return _context.Expenses.Include(e => e.Category).ToList();
+            return _context.Expenses.Include(e => e.Category).OrderByDescending(e => e.Date).ToList();
         }
         public Expense addExpense(Expense expense)
         {
